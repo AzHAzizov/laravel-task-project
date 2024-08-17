@@ -41,6 +41,8 @@
     padding: 20px;
     border-radius: 8px;
     position: relative;
+    width: 500px;  
+    height: 340px; 
   }
   .modal-close {
     position: absolute;

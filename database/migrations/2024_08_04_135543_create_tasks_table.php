@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
 
             $table->string('title');
-            $table->text('body');
-            $table->enum('status', ['end', 'created', 'returned']);
+            $table->text('body')->nullable();
+            $table->enum('status', ['end', 'created', 'returned'])->default('created');
             $table->date('due_date');
 
             $table->unsignedBigInteger('user_id');

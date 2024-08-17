@@ -37,7 +37,7 @@ class TasksController extends Controller
             $request->validated(),
             ['user_id' => 1]
         ));
-        return  TaskResource::make($task)->resolve();
+        return  TaskResource::make(Task::find($task->id))->resolve();
     } 
 
     /**
@@ -46,7 +46,7 @@ class TasksController extends Controller
     public function update(UpdateRequest $request, Task $task)
     {
         $task->update($request->validated());
-        return  TaskResource::make($task)->resolve();
+        return  TaskResource::make(Task::find($task->id))->resolve();
     }
 
     /**

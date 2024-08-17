@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Task;
 
+use App\Rules\DateLimit;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateRequest extends FormRequest
@@ -23,9 +24,14 @@ class UpdateRequest extends FormRequest
     {
         return [
             'id' => 'required|exists:tasks,id',
-            'body' => 'required|string',
+            'body' => 'string|nullable',
             'title' => 'required|string',
-            'due_date' => 'required|date|date_format:Y-m-d',
+            'due_date' => [
+                'required',
+                'date',
+                'date_format:Y-m-d',
+                new DateLimit('tasks', 'due_date', 3)  
+            ],
             'status' => 'required|string'
         ];
     }

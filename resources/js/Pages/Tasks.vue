@@ -7,7 +7,7 @@
         </button>
 
         <Modal :isOpen="modal.createTask" @close="hideModalToCreateTask">
-            <TaskForm @task-created="createTask" :task="clearFormTemplate" />
+            <TaskForm @task-created="newTaskCreated" :task="clearFormTemplate" />
         </Modal>
     </nav>
     <div class="p-4">
@@ -87,19 +87,23 @@ export default {
             this.modal.createTask = false;
             this.modal.editTask = false;
         },
+        newTaskCreated(newTask) {
+
+
+            console.log(newTask);
+
+            this.tasks.push(newTask);
+            console.log(this.tasks)
+            this.hideModalToCreateTask();
+        },
         resetForm() {
             this.formTemplate = {
                 title: '',
-                description: '',
+                descriptieon: '',
                 task_day: ''
             };
         },
-        createTask(task) {
-            axios.post('/tasks', task).then(res => {
-                this.localTasks.push(res.data);
-                this.hideModalToCreateTask();
-            });
-        }
+         
     }
 }
 </script>

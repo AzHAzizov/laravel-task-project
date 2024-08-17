@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Task;
 
+use App\Rules\DateLimit;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateRequest extends FormRequest
@@ -22,10 +23,14 @@ class CreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'body' => 'required|string',
+            'body' => 'string|nullable',
             'title' => 'required|string',
-            'due_date' => 'required|date|date_format:Y-m-d',
-            'status' => 'required|string'
+            'due_date' => [
+                'required',
+                'date',
+                'date_format:Y-m-d',
+                new DateLimit('tasks', 'due_date', 2)  
+            ],
         ];
     }
 }

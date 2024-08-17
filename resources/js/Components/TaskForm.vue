@@ -7,13 +7,17 @@
     </div>
     <div class="mb-4">
       <label for="description" class="block text-gray-700 font-bold mb-2">Description</label>
-      <textarea  :required="true" id="description" v-model="form.body" required
+      <textarea  id="description" v-model="form.body"
         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
     </div>
 
     <div class="mb-4">
-      <input min="{{ date('Y-m-d') }}" :required="true" type="date" id="due_date" name="due_date" v-model="form.due_date"
-      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+      <p v-if="errors.due_date" id="due_date_error" class="mt-2 text-pink-600">
+        {{ errors.due_date }}
+      </p>
+      <input min="{{ date('Y-m-d') }}" :required="true" type="date" id="due_date" name="due_date"
+        v-model="form.due_date"
+        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
     </div>
 
     <button type="submit"
@@ -24,6 +28,10 @@
 </template>
 
 <script>
+
+
+import axios from 'axios';
+
 export default {
   name: "TaskForm",
   props: {
@@ -39,6 +47,9 @@ export default {
         body: '',
         due_date: ''
       },
+      errors: {
+        due_date: false
+      },
       isEditMode: false
     }
   },
@@ -51,11 +62,24 @@ export default {
   methods: {
     submitForm() {
       if (this.isEditMode) {
-        this.$emit('task-updated', { ...this.form });
+        const createData = { ...this.form };
+        this.$emit('task-updated', createData);
+        this.resetForm();
       } else {
-        this.$emit('task-created', { ...this.form, status: 'created' });
+        axios.post('/tasks', { ...this.form }).then(res => {
+          this.$emit('task-created',  {...res.data});
+          this.error.due_date = false
+        }).catch(err => {
+          const errors = err.response?.data?.errors || {};
+          Object.keys(errors).forEach((key, index) => {
+            console.log(errors[key][0], key);
+            this.errors[key] = errors[key][0];
+          });
+          return;
+        });
+
+       
       }
-      this.resetForm();
     },
     resetForm() {
       this.form = {
